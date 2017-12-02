@@ -1,0 +1,19 @@
+{
+  "name": "Tabs Extender",
+  "manifest_version": 2,
+  "version": "1",
+  "background": {
+    "persistent": false,
+    "scripts": ["background.js"]
+  },
+  "commands": {
+    "flush-tab-right": {
+      "suggested_key": {
+        "default": "Ctrl+Right",
+        "mac": "Command+Right"
+      },
+      "description": "Flush current tab to the rightmost tab"
+    }
+  },
+  "permissions": ["tabs"]
+}
