@@ -10,3 +10,12 @@ chrome.commands.onCommand.addListener(function(command) {
     });
   }
 })
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.action == "track-tab") {
+    sessionStorage.setItem("trackedTabId", sender.tab.id);
+  } else if (request.action == "switch-tab") {
+    var trackedTabId = parseInt(sessionStorage.getItem("trackedTabId"));
+    chrome.tabs.update(trackedTabId, {active: true});
+  }
+});
