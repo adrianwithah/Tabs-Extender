@@ -9,8 +9,8 @@
   "commands": {
     "flush-tab-right": {
       "suggested_key": {
-        "default": "Ctrl+Right",
-        "mac": "Command+Right"
+        "default": "Ctrl+Down",
+        "mac": "Command+Down"
       },
       "description": "Flush current tab to the rightmost tab"
     }
