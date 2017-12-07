@@ -19,5 +19,5 @@
       "description": "Flush current tab to the rightmost tab"
     }
   },
-  "permissions": ["tabs"]
+  "permissions": ["tabs", "storage"]
 }

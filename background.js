@@ -11,7 +11,7 @@ chrome.commands.onCommand.addListener(function(command) {
 
 chrome.windows.onRemoved.addListener(function(windowId) {
   var trackWindowString = trackWindowPrefix + windowId.toString();
-  sessionStorage.removeItem(trackWindowString);
+  chrome.storage.local.remove(trackWindowString);
 });
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -28,23 +28,26 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 function handleTrackTab(trackWindowString, tabIdToTrack) {
-  var newJSON = {};
-  newJSON.tracked = tabIdToTrack;
-  sessionStorage.setItem(trackWindowString, JSON.stringify(newJSON));
+  var trackJSON = {};
+  trackJSON[trackWindowString] = {
+    tracked : tabIdToTrack
+  };
+  chrome.storage.local.set(trackJSON);
   return;
 }
 
 function handleSwitchTab(trackWindowString, activeTabId) {
-  var getJSON = JSON.parse(sessionStorage.getItem(trackWindowString));
-  var trackedTabId = parseInt(getJSON.tracked);
-  if (activeTabId != trackedTabId) {
-    getJSON.from = activeTabId;
-    sessionStorage.setItem(trackWindowString, JSON.stringify(getJSON));
-    chrome.tabs.update(trackedTabId, {active: true});
-    return;
-  }
-  if (getJSON.hasOwnProperty("from")) {
-    var fromTabId = parseInt(JSON.parse(sessionStorage.getItem(trackWindowString)).from);
-    chrome.tabs.update(fromTabId, {active: true});
-  }
+  chrome.storage.local.get(trackWindowString, function(getJSON) {
+    var trackedTabId = parseInt(getJSON[trackWindowString].tracked);
+    if (activeTabId != trackedTabId) {
+      getJSON[trackWindowString].from = activeTabId;
+      chrome.storage.local.set(getJSON);
+      chrome.tabs.update(trackedTabId, {active: true});
+      return;
+    }
+    if (getJSON[trackWindowString].hasOwnProperty("from")) {
+      var fromTabId = parseInt(getJSON[trackWindowString].from);
+      chrome.tabs.update(fromTabId, {active: true});
+    }
+  });
 }
